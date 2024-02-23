@@ -1,9 +1,14 @@
-import React from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const LoadingIssueNewPage = () => {
   return (
-    <div>
-      <p className=''>Loading...</p>
+    <div className='max-w-xl'>
+            <form className=' space-y-3'>
+        <Skeleton width='5rem' />
+        <Skeleton height='20rem' />
+        <Skeleton width='5rem' />
+      </form>
     </div>
   );
 };
