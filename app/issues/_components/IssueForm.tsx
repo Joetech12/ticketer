@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 // import SimpleMDE from "react-simplemde-editor";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
-import { createIssueSchema } from "@/app/validationSchemas";
+import { issueSchema } from "@/app/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
 import axios from "axios";
@@ -17,7 +17,7 @@ import { z } from "zod";
 //   title: string;
 //   description: string;
 // }
-type IssueFormData = z.infer<typeof createIssueSchema>;
+type IssueFormData = z.infer<typeof issueSchema>;
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
@@ -27,7 +27,7 @@ interface Props {
   issue?: Issue;
 }
 
-const IssueForm = ({issue}: Props) => {
+const IssueForm = ({ issue }: Props) => {
   const router = useRouter();
   const {
     register,
@@ -35,7 +35,7 @@ const IssueForm = ({issue}: Props) => {
     handleSubmit,
     formState: { errors },
   } = useForm<IssueFormData>({
-    resolver: zodResolver(createIssueSchema),
+    resolver: zodResolver(issueSchema),
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +43,8 @@ const IssueForm = ({issue}: Props) => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setIsSubmitting(true);
-      await axios.post("/api/issues", data);
+      if (issue) await axios.patch("/api/issues/" + issue.id, data);
+      else await axios.post("/api/issues", data);
       router.push("/issues");
     } catch (error) {
       setIsSubmitting(true);
@@ -61,7 +62,11 @@ const IssueForm = ({issue}: Props) => {
       )}
       <form className=' space-y-3' onSubmit={onSubmit}>
         <TextField.Root>
-          <TextField.Input defaultValue={issue?.title} placeholder='Title' {...register("title")} />
+          <TextField.Input
+            defaultValue={issue?.title}
+            placeholder='Title'
+            {...register("title")}
+          />
         </TextField.Root>
         <ErrorMessage>{errors.title?.message}</ErrorMessage>
         <Controller
@@ -74,7 +79,8 @@ const IssueForm = ({issue}: Props) => {
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
         <Button disabled={isSubmitting} type='submit' className='w-full'>
-          Submit New Issue {isSubmitting && <Spinner />}
+          {issue ? "Update Issue" : "Create New Issue"}{" "}
+          {isSubmitting && <Spinner />}
         </Button>
       </form>
     </div>
