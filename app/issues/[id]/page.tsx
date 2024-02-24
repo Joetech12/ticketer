@@ -9,9 +9,7 @@ import IssueDetails from "./IssueDetails";
 const IssueDetailPage = async ({ params }: { params: { id: string } }) => {
   const pid = parseInt(params.id);
 
-  //   if (typeof pid !== "number") {
-  //     return notFound();
-  //   }
+  
   const issue = await prisma.issue.findUnique({
     where: { id: pid },
   });
