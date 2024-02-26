@@ -19,12 +19,14 @@ const NavBar = () => {
 
   const { status, data: session } = useSession();
 
-  console.log({ status });
+  // console.log({ status });
 
   const links = [
     { label: "Dashboard", href: "/" },
     { label: "Issues", href: "/issues" },
   ];
+
+  
 
   return (
     <nav className='border-b mb-5 px-5 py-3'>
@@ -61,6 +63,7 @@ const NavBar = () => {
                     size='2'
                     radius='full'
                     className='cursor-pointer'
+                    referrerPolicy='no-referrer'
                   />
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
